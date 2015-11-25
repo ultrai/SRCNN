@@ -4,7 +4,7 @@ Embedding seperable filters into deeper architectures for super resolving optica
 
 Achives similar performance to Fully connected with 20% less parameters
 
-<img src="https://raw.githubusercontent.com/ultrai/SRCNN/master/Results/test.jpg" width="200">
+<img src="https://raw.githubusercontent.com/ultrai/SRCNN/master/Results/tst.jpg" width="200">
 Test image
 <img src="https://raw.githubusercontent.com/ultrai/SRCNN/master/Results/Test_1_SRCNN.jpg" width="200">
 Fully connected CNN 
