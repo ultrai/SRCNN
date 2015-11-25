@@ -1,5 +1,5 @@
-dofile ('SRCNN') -- CNN architecture for super resoltuion (http://mmlab.ie.cuhk.edu.hk/projects/SRCNN.html)
-dofile ('SRCNN_modified') -- CNN with seperable filters 
+dofile ('SRCNN.lua') -- CNN architecture for super resoltuion (http://mmlab.ie.cuhk.edu.hk/projects/SRCNN.html)
+dofile ('SRCNN_modified.lua') -- CNN with seperable filters 
 --dofile ('SRCNN_modified2') -- http://lxu.me/projects/dcnn/  requires more number of parameters 
 train1 = torch.load('train.t7') -- MSE on train set with CNN 
 train2 = torch.load('train_modified.t7') -- MSE on train set with modified CNN 
