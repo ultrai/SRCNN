@@ -1,7 +1,8 @@
 # SRCNN
 Embedding seperable filters into deeper architectures for super resolving optical coherence tomography images
-<a href="https://drive.google.com/file/d/0BxTWCAbuRb6aZWk5ZTNTVFhKMFE/view"><img src="https://drive.google.com/file/d/0BxTWCAbuRb6aZWk5ZTNTVFhKMFE/view" style="width: 500px; max-width: 100%; height: auto" title="Click for the larger version." /></a>
+## Summary
 
-<a href="https://drive.google.com/uc?export=view&id=https://drive.google.com/file/d/0BxTWCAbuRb6aZWk5ZTNTVFhKMFE/view"><img src="https://drive.google.com/uc?export=view&id=https://drive.google.com/file/d/0BxTWCAbuRb6aZWk5ZTNTVFhKMFE/view" style="width: 500px; max-width: 100%; height: auto" title="Click for the larger version." /></a>
+Achives similar performance to Fully connected with 20% less parameters
 
-
+![image](https://raw.githubusercontent.com/ultrai/SRCNN/master/Results/Test_1_SRCNN.jpg)
+Test image
