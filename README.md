@@ -4,5 +4,5 @@ Embedding seperable filters into deeper architectures for super resolving optica
 
 Achives similar performance to Fully connected with 20% less parameters
 
-![slide](https://raw.githubusercontent.com/ultrai/SRCNN/master/Results/test.png)
-Test iamge
+![slide](https://raw.githubusercontent.com/ultrai/SRCNN/master/Results/test.jpg)
+Test image
