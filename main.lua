@@ -32,5 +32,15 @@ def foo(Data,target):
     return (done)
 ]=])
 print( py.eval('foo(d,l)', {d = t,l="Data.csv"})) -- To create a CSV file
+--[[
+<img src="https://raw.githubusercontent.com/ultrai/SRCNN/master/Results/test.jpg" alt = "Test image" width="100" >
+<img src="https://raw.githubusercontent.com/ultrai/SRCNN/master/Results/Test_1_SRCNN.jpg" width="200">
+<img src="https://raw.githubusercontent.com/ultrai/SRCNN/master/Results/Test_1_Proposed.jpg" width="200">
+<img src="https://raw.githubusercontent.com/ultrai/SRCNN/master/Results/Test_1_truth.jpg" width="200">
+a)Test image b)Fully connected CNN c)Modified CNN with 20% less parameters d)Anticipated super resolved image
 
+![image](https://raw.githubusercontent.com/ultrai/SRCNN/master/Results/Data_plot.png )
+PSNR profiles of CNN and modified CNN across training and testing datasets
+
+]]--
 
