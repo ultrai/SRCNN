@@ -41,6 +41,30 @@ a)Test image b)Fully connected CNN c)Modified CNN with 20% less parameters d)Ant
 
 ![image](https://raw.githubusercontent.com/ultrai/SRCNN/master/Results/Data_plot.png )
 PSNR profiles of CNN and modified CNN across training and testing datasets
-
 ]]--
 
+--[[
+qlua
+require 'sys'
+require 'torch'
+require 'image'
+require 'cunn'
+require 'nn' 
+require 'cudnn'
+require 'cutorch'
+gfx = require 'gfx.js'
+CNN = torch.load('Model.t7')
+--CNN = torch.load('Model_modified.t7')
+parameters,gradParameters = CNN:getParameters()
+parameters:size()
+--itorch.image(CNN:get(2).weight)
+ll = CNN:get(7).weight
+pp = ll:clone()
+pp = torch.reshape(pp,80,15,15)
+pp = pp:double()
+pp = torch.exp(pp:mul(15))
+win_w1 = image.display{image=pp, zoom=4, nrow=10,
+                                min=pp:min(), max=pp:max(),
+                                win=win_w1, legend='stage 1: weights', padding=1}
+image.save('weights2.jpg',win_w1.image)
+]]--
