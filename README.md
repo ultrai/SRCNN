@@ -17,7 +17,7 @@ This achives similar performance to Fully connected with 46% less parameters.
 ## Data set
 Prof. Sina Farsiu team has generously made the data available [here!](http://people.duke.edu/~sf59/Fang_TMI_2013.htm)
 
-## Training models and reproduce results
+## Training models and reproducing results
 ```bash
 $ th dofile('main.lua')
 ```
