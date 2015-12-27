@@ -19,7 +19,8 @@ Prof. Sina Farsiu team has generously made the data available [here!](http://peo
 
 ## Training models and reproducing results
 ```bash
-$ th dofile('main.lua')
+$ th 
+th> dofile('main.lua')
 ```
 
 
