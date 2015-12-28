@@ -9,7 +9,7 @@ require 'cutorch'
 require 'math'
 im = require 'image'
 py = require('fb.python')
-cutorch.setDevice(1)
+--cutorch.setDevice(1)
 torch.setdefaulttensortype('torch.FloatTensor')
 
 require 'hdf5'
