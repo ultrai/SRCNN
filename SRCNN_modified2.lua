@@ -1,3 +1,6 @@
+--Deep Convolutional Neural Network for Image Deconvolution  
+--I might be wrong
+--http://lxu.me/
 require 'sys'
 require 'torch'
 require 'cunn'
@@ -8,7 +11,7 @@ require 'optim'
 require 'cutorch'
 require 'math'
 im = require 'image'
-cutorch.setDevice(2)
+--cutorch.setDevice(2)
 torch.setdefaulttensortype('torch.FloatTensor')
 
 require 'hdf5'
