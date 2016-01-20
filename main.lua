@@ -69,6 +69,7 @@ win_w1 = image.display{image=pp, zoom=4, nrow=10,
                                 win=win_w1, legend='stage 1: weights', padding=1}
 image.save('weights2.jpg',win_w1.image)
 ]]--
+--[[ saturated display high contrast
 qlua
 require 'sys'
 require 'torch'
@@ -92,3 +93,4 @@ win_w1 = image.display{image=pp, zoom=4, nrow=10,
                                 min=pp:min(), max=pp:max(),
                                 win=win_w1, legend='stage 1: weights', padding=1}
 image.save('weights2.jpg',win_w1.image)
+]]--
