@@ -61,6 +61,7 @@ parameters:size()
 ll = CNN:get(7).weight
 pp = ll:clone()
 pp = torch.reshape(pp,80,15,15)
+torch.save('parameters.t7',pp)
 pp = pp:double()
 pp = torch.exp(pp:mul(15))
 win_w1 = image.display{image=pp, zoom=4, nrow=10,
