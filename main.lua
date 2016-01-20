@@ -69,3 +69,26 @@ win_w1 = image.display{image=pp, zoom=4, nrow=10,
                                 win=win_w1, legend='stage 1: weights', padding=1}
 image.save('weights2.jpg',win_w1.image)
 ]]--
+qlua
+require 'sys'
+require 'torch'
+require 'image'
+require 'cunn'
+require 'nn' 
+require 'cudnn'
+require 'cutorch'
+CNN = torch.load('Model.t7')
+ll = CNN:get(7).weight
+pp = ll:clone()
+pp = pp:double()
+pp = torch.reshape(pp,80,225)
+pp = pp:add(-pp:mean())
+pp_min = pp:min(2):repeatTensor(1,225)
+pp = pp-pp_min
+pp_max = pp:max(2):repeatTensor(1,225)
+pp = torch.cdiv(pp,pp_max)
+pp = torch.reshape(pp,80,15,15)
+win_w1 = image.display{image=pp, zoom=4, nrow=10,
+                                min=pp:min(), max=pp:max(),
+                                win=win_w1, legend='stage 1: weights', padding=1}
+image.save('weights2.jpg',win_w1.image)
