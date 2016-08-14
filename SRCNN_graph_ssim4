@@ -1,0 +1,172 @@
+require 'sys'
+require 'torch'
+require 'cunn'
+require 'nn' 
+require 'cudnn'
+--matio = require 'matio'
+require 'optim'
+require 'cutorch'
+require 'math'
+im = require 'image'
+require 'nngraph'
+cutorch.setDevice(1)
+torch.setdefaulttensortype('torch.FloatTensor')
+torch.manualSeed(27)
+grad = require 'autograd'
+util = require 'autograd.util'
+
+
+n=11
+
+mu_1 = grad.nn.SpatialAveragePooling(n,n,1,1)--,(n-1)/2,(n-1)/2)
+mu_2 = grad.nn.SpatialAveragePooling(n,n,1,1)--,(n-1)/2,(n-1)/2)
+mu_3 = grad.nn.SpatialAveragePooling(n,n,1,1)--,(n-1)/2,(n-1)/2)
+mu_4 = grad.nn.SpatialAveragePooling(n,n,1,1)--,(n-1)/2,(n-1)/2)
+mu_5 = grad.nn.SpatialAveragePooling(n,n,1,1)--,(n-1)/2,(n-1)/2)
+
+
+cm_1 =  grad.nn.CMulTable()
+cm_2 =  grad.nn.CMulTable()
+cm_3 =  grad.nn.CMulTable()
+cm_4 =  grad.nn.CMulTable()
+cm_5 =  grad.nn.CMulTable()
+cm_6 =  grad.nn.CMulTable()
+cm_7 =  grad.nn.CMulTable()
+cm_8 =  grad.nn.CMulTable()
+
+cd_1 =  grad.nn.CDivTable()
+
+ssim = function (y,x)
+       mu_x = mu_1(x)
+       mu_y = mu_2(y)
+       mu_x_sq = cm_1({mu_x,mu_x})
+       mu_y_sq = cm_2({mu_y,mu_y})
+       mu_xy = cm_3({mu_x,mu_y})
+       X_2 = cm_4({x,x})
+       Y_2 = cm_5({y,y})
+       XY = cm_6({x,y})
+       sigma_x_sq = mu_3(X_2)-mu_x_sq
+       sigma_y_sq = mu_4(Y_2)-mu_y_sq
+       sigma_xy = mu_5(XY)-mu_xy
+       A1 = mu_xy*2+5
+       A2 = sigma_xy*2+45.5
+       B1 = mu_x_sq+mu_y_sq+5
+       B2 = sigma_x_sq+sigma_y_sq+45.5
+       A = cm_7({A1,A2})
+       B = cm_8({B1,B2})
+       v = -torch.mean(cd_1({A,B}))
+       return v
+end
+df = grad(ssim)
+
+
+require 'hdf5'
+myFile = hdf5.open('Data.h5', 'r')
+Temp = myFile:read(''):all()
+myFile:close()
+temp=Temp.x
+temp = temp:type('torch.FloatTensor')
+inputs = torch.Tensor(temp:size(1),temp:size(2),temp:size(3),temp:size(4)):copy(temp)--:div(255)
+temp=Temp.y
+temp = temp:type('torch.FloatTensor')
+targets = torch.Tensor(temp:size(1),temp:size(2),temp:size(3),temp:size(4)):copy(temp)--:div(255)
+
+myFile = hdf5.open('Data_test.h5', 'r')
+Temp = myFile:read(''):all()
+myFile:close()
+temp=Temp.x
+temp = temp:type('torch.FloatTensor')
+inputs_test = torch.Tensor(temp:size(1),temp:size(2),temp:size(3),temp:size(4)):copy(temp)--:div(255)
+temp=Temp.y
+temp = temp:type('torch.FloatTensor')
+targets_test = torch.Tensor(temp:size(1),temp:size(2),temp:size(3),temp:size(4)):copy(temp)--:div(255)
+
+
+
+Model = {}
+
+criterion = nn.MSECriterion()
+criterion:cuda()
+
+
+
+Cost = 999999
+
+func = function(x)
+        if x ~= parameters then
+              parameters:copy(x)
+        end
+        gradParameters:zero()
+        f = 0
+f2=0
+b=0
+        f_test = 0
+        neval = neval + 1
+batch=1
+        for i = 1,inputs:size(1) do
+            output = AE:forward(inputs[{{i},{1},{},{}}]:cuda())
+err = criterion:forward(output,targets[{{i},{1},{},{}}]:cuda())
+f2=f2+err
+ df_do, err = df(output:float(),targets[i][{{1},{},{}}])
+           
+f = f+err
+            AE:backward(inputs[{{i},{1},{},{}}]:cuda(), df_do:cuda())
+ 	    collectgarbage()
+        end
+        table.insert(train,f/b)
+--        AE:evaluate()
+        for i = 1,inputs_test:size(1) do
+            output = AE:forward(inputs_test[i][{{1},{},{}}]:cuda())
+            err = criterion:forward(output,targets_test[i][{{1},{},{}}]:cuda())
+            f_test = f_test + err
+            collectgarbage()
+b = b+1
+        end
+--        AE:training()
+        table.insert(test,f_test/inputs_test:size(1))
+        print(string.format('after %d evaluations J(x) = %f %f took %f %f', neval, f/b, f2/b, sys:toc(),f_test/inputs_test:size(1)))
+      return f/b,gradParameters/b
+end
+
+optimState = {maxIter = 150}
+optimMethod = optim.cg--adagrad--cg
+
+AE = nn.Sequential()
+AE:add(cudnn.SpatialConvolution(1, 120,15,15,1,1,7,7))
+AE:add(cudnn.ReLU())
+AE:add(cudnn.SpatialConvolution(120, 80, 1,1,1,1))
+AE:add(cudnn.ReLU())
+AE:add(cudnn.SpatialConvolution(80,1,15,15,1,1,7,7))
+AE:add(cudnn.ReLU())
+
+AE:cuda()
+AE:training()
+parameters,gradParameters = AE:getParameters()
+sys:tic()
+train = {}
+test = {}
+--trainLogger = optim.Logger(('Results/train_normal.log'))
+--testLogger = optim.Logger(('Results/test_normal.log'))
+neval = 0
+for temppp = 1,150 do
+optimMethod(func, parameters, optimState)-- <------------------- optimization
+end
+AE:evaluate()
+for i = 1,10 do
+      output = AE:forward(inputs[i]:cuda())
+      im.save('Results/Train_' .. i .. '_SRCNN.jpg', output:float():div(255))
+      im.save('Results/Train_' .. i .. '_truth.jpg', targets[i]:div(255))
+end
+for i = 1,17 do
+      output = AE:forward(inputs_test[i]:cuda())
+      im.save('Results/Test_' .. i .. '_SRCNN.jpg', output:float():div(255))
+      im.save('Results/Test_' .. i .. '_truth.jpg', targets_test[i]:div(255))
+end
+train = torch.Tensor(train)
+test = torch.Tensor(test)
+torch.save('Model_L5_L1.t7',AE)
+torch.save('train_L5_L1.t7',train)--torch.save('train.txt',train,'ascii')
+torch.save('test_L5_L1.t7',test)
+AE = nil
+collectgarbage()
+
