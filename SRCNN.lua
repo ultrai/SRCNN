@@ -48,9 +48,7 @@ def foo(dir):
            im = np.array(Image.open(path2 +  str(x) +"/test"+type))
            hh = np.array(Image.open(path2 +  str(x) +"/average"+type)) 
            im2 = im[:,range(0,im.shape[1],2)]   #<-removal of intermediate A-scans
-           ll = scipy.misc.imresize(im2,np.shape(im)) #<-----  Interpolation to High resolution
-           ll = scipy.misc.imresize(im2,np.shape(im)) #<-----  Interpolation to High resolution
-           ll = np.ndarray.reshape(ll,(1,1,ll.shape[0],ll.shape[1]))
+           im = scipy.misc.imresize(im2,np.shape(im)) #<-----  Interpolation to High resolution
            if x==1:
               LL = np.ndarray.reshape(im,(1,1,im.shape[0],im.shape[1]))
               HH = np.ndarray.reshape(hh,(1,1,hh.shape[0],hh.shape[1]))
