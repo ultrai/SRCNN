@@ -3,15 +3,15 @@ require 'torch'
 require 'cunn'
 require 'nn' 
 require 'cudnn'
-matio = require 'matio'
+--matio = require 'matio'
 require 'optim'
 require 'cutorch'
 require 'math'
 im = require 'image'
-py = require('fb.python')
+--py = require('fb.python')
 --cutorch.setDevice(2)
 torch.setdefaulttensortype('torch.FloatTensor')
-
+--[[
 py.exec([=[
 import scipy.misc  
 import scipy.io as sio
@@ -69,7 +69,7 @@ def foo(dir):
 ]=])
 
 print( py.eval('foo(d)', {d = "/home/mict/Desktop/OCT_SR/"}) )
-
+]]--
 require 'hdf5'
 myFile = hdf5.open('Data.h5', 'r')
 Temp = myFile:read(''):all()
