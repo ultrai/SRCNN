@@ -1,7 +1,7 @@
 # SRCNN
 Embedding seperable filters into deeper architectures for sparsely sampled (super resolving) optical coherence tomography images
 
-update: Incompatability between anaconda and fblualibn led to new Data.py and modified SRCNN.lua
+*update: Incompatability between anaconda and fblualibn led to new Data.py and modified SRCNN.lua*
 ## Summary
 As lower layer filters learns gabor like structures they can be learned using separable filters with parallel architecture. 
 This achives similar performance to Fully connected with 46% less parameters.
