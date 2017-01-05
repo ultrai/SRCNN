@@ -3,7 +3,8 @@ require 'torch'
 require 'cunn'
 require 'nn' 
 require 'cudnn'
---matio = require 'matio'
+require 'paths'
+matio = require 'matio'
 require 'optim'
 require 'cutorch'
 require 'math'
@@ -172,16 +173,26 @@ test = {}
 neval = 0
 optimMethod(func, parameters, optimState)-- <------------------- optimization
 AE:evaluate()
+
+SRCNN_Train= torch.zeros(10,450,900)
 for i = 1,10 do
+
       output = AE:forward(inputs[i]:cuda())
-      im.save('/home/mict/Desktop/OCT_SR/Results/Train_' .. i .. '_SRCNN.jpg', output:float():div(255))
-      im.save('/home/mict/Desktop/OCT_SR/Results/Train_' .. i .. '_truth.jpg', targets[i]:div(255))
+      im.save(paths.cwd() .. '/Results/Train_' .. i .. '_SRCNN.jpg', output:float():div(255))
+      im.save(paths.cwd() .. 'Results/Train_' .. i .. '_truth.jpg', targets[i]:div(255))
+      SRCNN_Train[i] = output:float()
 end
+matio.save('SRCNN_Train.mat',SRCNN_Train)
+SRCNN _Test= torch.zeros(10,450,900)
+
 for i = 1,17 do
       output = AE:forward(inputs_test[i]:cuda())
-      im.save('/home/mict/Desktop/OCT_SR/Results/Test_' .. i .. '_SRCNN.jpg', output:float():div(255))
-      im.save('/home/mict/Desktop/OCT_SR/Results/Test_' .. i .. '_truth.jpg', targets_test[i]:div(255))
+      im.save(paths.cwd() .. '/Results/Test_' .. i .. '_SRCNN.jpg', output:float():div(255))
+      im.save(paths.cwd() .. '/Results/Test_' .. i .. '_truth.jpg', targets_test[i]:div(255))
+      SRCNN_Test[i] = output:float()
 end
+matio.save('SRCNN_Test.mat',SRCNN_Train)
+
 train = torch.Tensor(train)
 test = torch.Tensor(test)
 torch.save('Model.t7',AE)

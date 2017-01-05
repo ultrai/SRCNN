@@ -3,12 +3,13 @@ require 'torch'
 require 'cunn'
 require 'nn' 
 require 'cudnn'
+require 'paths'
 matio = require 'matio'
 require 'optim'
 require 'cutorch'
 require 'math'
 im = require 'image'
-py = require('fb.python')
+--py = require('fb.python')
 --cutorch.setDevice(1)
 torch.setdefaulttensortype('torch.FloatTensor')
 
@@ -124,14 +125,24 @@ test = {}
 neval = 0
 optimMethod(func, parameters, optimState)-- <------------------- optimization
 AE:evaluate()
+SRCNN_modified_Train= torch.zeros(10,450,900)
+
 for i = 1,10 do
       output = AE:forward(inputs[i]:cuda())
-      im.save('/home/mict/Desktop/OCT_SR/Results/Train_' .. i .. '_Proposed.jpg', output:float():div(255))
+      im.save(paths.cwd() .. '/Results/Train_' .. i .. '_Proposed.jpg', output:float():div(255))
+SRCNN_modified_Train[i] = output:float()
 end
+matio.save('SRCNN_modified_Train.mat',SRCNN_modified_Train)
+SRCNN_modified_Test= torch.zeros(10,450,900)
+
 for i = 1,17 do
+  
       output = AE:forward(inputs_test[i]:cuda())
-      im.save('/home/mict/Desktop/OCT_SR/Results/Test_' .. i .. '_Proposed.jpg', output:float():div(255))
+      im.save(paths.cwd() .. '/Results/Test_' .. i .. '_Proposed.jpg', output:float():div(255))
+      SRCNN_modified_Test[i] = output:float()
 end
+matio.save('SRCNN_modified_Test.mat',SRCNN_modified_Test)
+
 torch.save('Model_modified.t7',AE)
 torch.save('train_modified.t7',torch.Tensor(train))
 torch.save('test_modified.t7',torch.Tensor(test))
