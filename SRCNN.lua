@@ -3,74 +3,14 @@ require 'torch'
 require 'cunn'
 require 'nn' 
 require 'cudnn'
-require 'paths'
-matio = require 'matio'
 require 'optim'
 require 'cutorch'
 require 'math'
 im = require 'image'
---py = require('fb.python')
---cutorch.setDevice(2)
+cutorch.setDevice(2)
 torch.setdefaulttensortype('torch.FloatTensor')
---[[
-py.exec([=[
-import scipy.misc  
-import scipy.io as sio
-import numpy as np
-from PIL import Image
-from sklearn.feature_extraction import image
-def foo(dir):
-    type = ".tif"
-    path1 = dir + "Images for Dictionaries and Mapping leraning/"
-    path2 = dir + "For synthetic experiments/"
-    for x in range(1, 11):#<---- as indexing images start from 1
-        #print(x)
-        im = np.array(Image.open(path1 + "LL" + str(x) + type)) 
-        im2 = im[:,range(0,im.shape[1],2)]   #<-removal of intermediate A-scans
-        im = scipy.misc.imresize(im2,np.shape(im)) #<-----  Interpolation to High resolution
-        hh = np.array(Image.open(path1 + "HH" + str(x) + type)) 
-        if x==1:
-           LL = np.ndarray.reshape(im,(1,1,im.shape[0],im.shape[1]))
-           HH = np.ndarray.reshape(hh,(1,1,hh.shape[0],hh.shape[1]))
-        else:
-           ll = np.ndarray.reshape(im,(1,1,im.shape[0],im.shape[1]))
-           hh = np.ndarray.reshape(hh,(1,1,hh.shape[0],hh.shape[1]))
-           LL = np.concatenate((LL, ll), axis=0)
-           HH = np.concatenate((HH, hh), axis=0)
-    print('Train Data Prepared')
-    import h5py
-    h5f = h5py.File("Data.h5", 'w')
-    h5f.create_dataset('x', data=LL)
-    h5f.create_dataset('y', data=HH)
-    h5f.close()
-    print('Train Data saved')
-    for x in range(1, 19):
-        if x!=9:
-           im = np.array(Image.open(path2 +  str(x) +"/test"+type))
-           hh = np.array(Image.open(path2 +  str(x) +"/average"+type)) 
-           im2 = im[:,range(0,im.shape[1],2)]   #<-removal of intermediate A-scans
-           im = scipy.misc.imresize(im2,np.shape(im)) #<-----  Interpolation to High resolution
-           if x==1:
-              LL = np.ndarray.reshape(im,(1,1,im.shape[0],im.shape[1]))
-              HH = np.ndarray.reshape(hh,(1,1,hh.shape[0],hh.shape[1]))
-           else:
-              ll = np.ndarray.reshape(im,(1,1,im.shape[0],im.shape[1]))
-              hh = np.ndarray.reshape(hh,(1,1,hh.shape[0],hh.shape[1]))
-              LL = np.concatenate((LL, ll), axis=0)
-              HH = np.concatenate((HH, hh), axis=0)
-    print('Test Data Prepared')
-    import h5py
-    h5f = h5py.File("Data_test.h5", 'w')
-    h5f.create_dataset('x', data=LL)
-    h5f.create_dataset('y', data=HH)
-    h5f.close()
-    print('Test Data saved')
-    done = 1
-    return (done)
-]=])
 
-print( py.eval('foo(d)', {d = "/home/mict/Desktop/OCT_SR/"}) )
-]]--
+
 require 'hdf5'
 myFile = hdf5.open('Data.h5', 'r')
 Temp = myFile:read(''):all()
@@ -105,7 +45,7 @@ cmd:option('-nfeat',60,'Number of filters to be considered')
 cmd:option('-nfeat2',80,'Number of filters to be considered')
 cmd:option('-feat_sz',15,'Each filter size')
 cmd:option('-feat_sz2',15,'Each filter size')
-cmd:option('-iterations',1000,'total no of iterations')
+cmd:option('-iterations',500,'total no of iterations')
 cmd:text()
 
 opt = cmd:parse(arg)
@@ -146,7 +86,7 @@ func = function(x)
         end
         AE:training()
         table.insert(test,f_test/17)
-        print(string.format('after %d evaluations J(x) = %f took %f %f', neval, f/10,  sys:toc(),gradParameters[1]))
+        print(string.format('after %d evaluations J(x) = %f took %f %f', neval, f/10,  sys:toc(),f_test/17))
       return f/10,gradParameters/10
 end
 
@@ -174,25 +114,23 @@ neval = 0
 optimMethod(func, parameters, optimState)-- <------------------- optimization
 AE:evaluate()
 
-SRCNN_Train= torch.zeros(10,450,900)
+require 'paths'
+matio = require "matio"
+I_pred = torch.zeros(17,450,900)
+pathsHR = paths.cwd()  ..  '/Results/'
+
 for i = 1,10 do
-
       output = AE:forward(inputs[i]:cuda())
-      im.save(paths.cwd() .. '/Results/Train_' .. i .. '_SRCNN.jpg', output:float():div(255))
-      im.save(paths.cwd() .. 'Results/Train_' .. i .. '_truth.jpg', targets[i]:div(255))
-      SRCNN_Train[i] = output:float()
+      im.save(pathsHR .. 'Train_' .. i .. '_SRCNN.jpg', output:float():div(255))
+      im.save(pathsHR .. 'Train_' .. i .. '_truth.jpg', targets[i]:div(255))
 end
-matio.save('SRCNN_Train.mat',SRCNN_Train)
-SRCNN _Test= torch.zeros(10,450,900)
-
 for i = 1,17 do
-      output = AE:forward(inputs_test[i]:cuda())
-      im.save(paths.cwd() .. '/Results/Test_' .. i .. '_SRCNN.jpg', output:float():div(255))
-      im.save(paths.cwd() .. '/Results/Test_' .. i .. '_truth.jpg', targets_test[i]:div(255))
-      SRCNN_Test[i] = output:float()
+      output = AE:forward(inputs_test[i]:cuda()):float()
+      im.save(pathsHR .. 'Test_' .. i .. '_SRCNN.jpg', output:float():div(255))
+      im.save(pathsHR .. 'Test_' .. i .. '_truth.jpg', targets_test[i]:div(255))
+      I_pred[i] = output:clone()
 end
-matio.save('SRCNN_Test.mat',SRCNN_Train)
-
+matio.save("SRCNN.mat",I_pred)
 train = torch.Tensor(train)
 test = torch.Tensor(test)
 torch.save('Model.t7',AE)

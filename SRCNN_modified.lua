@@ -3,13 +3,12 @@ require 'torch'
 require 'cunn'
 require 'nn' 
 require 'cudnn'
-require 'paths'
 matio = require 'matio'
 require 'optim'
 require 'cutorch'
 require 'math'
 im = require 'image'
---py = require('fb.python')
+py = require('fb.python')
 --cutorch.setDevice(1)
 torch.setdefaulttensortype('torch.FloatTensor')
 
@@ -47,7 +46,7 @@ cmd:option('-nfeat',60,'Number of filters to be considered')
 cmd:option('-nfeat2',80,'Number of filters to be considered')
 cmd:option('-feat_sz',15,'Each filter size')
 cmd:option('-feat_sz2',15,'Each filter size')
-cmd:option('-iterations',1000,'total no of iterations')
+cmd:option('-iterations',500,'total no of iterations')
 cmd:text()
 
 opt = cmd:parse(arg)
@@ -88,7 +87,7 @@ func = function(x)
         end
         AE:training()
         table.insert(test,f_test/17)
-        print(string.format('after %d evaluations J(x) = %f took %f %f', neval, f/10,  sys:toc(),gradParameters[1]))
+        print(string.format('after %d evaluations J(x) = %f took %f %f', neval, f/10,  sys:toc(),f_test/17))
       return f/10,gradParameters/10
 end
 
@@ -125,24 +124,21 @@ test = {}
 neval = 0
 optimMethod(func, parameters, optimState)-- <------------------- optimization
 AE:evaluate()
-SRCNN_modified_Train= torch.zeros(10,450,900)
+
+require 'paths'
+pathsHR = paths.cwd()  ..  '/Results/'
+I_pred = torch.zeros(17,450,900)
 
 for i = 1,10 do
       output = AE:forward(inputs[i]:cuda())
-      im.save(paths.cwd() .. '/Results/Train_' .. i .. '_Proposed.jpg', output:float():div(255))
-SRCNN_modified_Train[i] = output:float()
+      im.save(pathsHR .. 'Train_' .. i .. '_Proposed.jpg', output:float():div(255))
 end
-matio.save('SRCNN_modified_Train.mat',SRCNN_modified_Train)
-SRCNN_modified_Test= torch.zeros(10,450,900)
-
 for i = 1,17 do
-  
-      output = AE:forward(inputs_test[i]:cuda())
-      im.save(paths.cwd() .. '/Results/Test_' .. i .. '_Proposed.jpg', output:float():div(255))
-      SRCNN_modified_Test[i] = output:float()
+      output = AE:forward(inputs_test[i]:cuda()):float()
+      im.save(pathsHR .. 'Test_' .. i .. '_Proposed.jpg', output:float():div(255))
+      I_pred[i] = output:clone()
 end
-matio.save('SRCNN_modified_Test.mat',SRCNN_modified_Test)
-
+matio.save("SRCNN_modified.mat",I_pred)
 torch.save('Model_modified.t7',AE)
 torch.save('train_modified.t7',torch.Tensor(train))
 torch.save('test_modified.t7',torch.Tensor(test))
