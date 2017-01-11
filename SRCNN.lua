@@ -45,7 +45,7 @@ cmd:option('-nfeat',60,'Number of filters to be considered')
 cmd:option('-nfeat2',80,'Number of filters to be considered')
 cmd:option('-feat_sz',15,'Each filter size')
 cmd:option('-feat_sz2',15,'Each filter size')
-cmd:option('-iterations',500,'total no of iterations')
+cmd:option('-iterations',1000,'total no of iterations')
 cmd:text()
 
 opt = cmd:parse(arg)
@@ -116,20 +116,23 @@ AE:evaluate()
 
 require 'paths'
 matio = require "matio"
+I_train = torch.zeros(10,450,900)
 I_pred = torch.zeros(17,450,900)
 pathsHR = paths.cwd()  ..  '/Results/'
 
 for i = 1,10 do
-      output = AE:forward(inputs[i]:cuda())
+      output = AE:forward(inputs[i]:cuda()):float()
       im.save(pathsHR .. 'Train_' .. i .. '_SRCNN.jpg', output:float():div(255))
-      im.save(pathsHR .. 'Train_' .. i .. '_truth.jpg', targets[i]:div(255))
+      im.save(pathsHR .. 'Train_' .. i .. '_truth.jpg', targets[i][1]:div(255))
+      I_train[i] = output:clone()
 end
 for i = 1,17 do
       output = AE:forward(inputs_test[i]:cuda()):float()
       im.save(pathsHR .. 'Test_' .. i .. '_SRCNN.jpg', output:float():div(255))
-      im.save(pathsHR .. 'Test_' .. i .. '_truth.jpg', targets_test[i]:div(255))
+      im.save(pathsHR .. 'Test_' .. i .. '_truth.jpg', targets_test[i][1]:div(255))
       I_pred[i] = output:clone()
 end
+matio.save("SRCNN_train.mat",I_train)
 matio.save("SRCNN.mat",I_pred)
 train = torch.Tensor(train)
 test = torch.Tensor(test)

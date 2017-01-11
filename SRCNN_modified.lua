@@ -8,8 +8,8 @@ require 'optim'
 require 'cutorch'
 require 'math'
 im = require 'image'
-py = require('fb.python')
---cutorch.setDevice(1)
+--py = require('fb.python')
+cutorch.setDevice(2)
 torch.setdefaulttensortype('torch.FloatTensor')
 
 require 'hdf5'
@@ -46,7 +46,7 @@ cmd:option('-nfeat',60,'Number of filters to be considered')
 cmd:option('-nfeat2',80,'Number of filters to be considered')
 cmd:option('-feat_sz',15,'Each filter size')
 cmd:option('-feat_sz2',15,'Each filter size')
-cmd:option('-iterations',500,'total no of iterations')
+cmd:option('-iterations',1000,'total no of iterations')
 cmd:text()
 
 opt = cmd:parse(arg)

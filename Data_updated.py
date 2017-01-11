@@ -10,8 +10,8 @@ for x in range(1, 11):#<---- as indexing images start from 1
     #print(x)
     im = np.array(Image.open(path1 + "LL" + str(x) + type)) 
     im2 = im[:,range(0,im.shape[1],2)]   #<-removal of intermediate A-scans
-    im2 = scipy.misc.imresize(im2,np.shape(im)) #<-----  Interpolation to High resolution
-    im[:,range(1,im.shape[1],2)] = im2[:,range(1,im.shape[1],2)]
+    im = scipy.misc.imresize(im2,np.shape(im)) #<-----  Interpolation to High resolution
+    #im[:,range(1,im.shape[1],2)] = im2[:,range(1,im.shape[1],2)]
     hh = np.array(Image.open(path1 + "HH" + str(x) + type)) 
     if x==1:
        LL = np.ndarray.reshape(im,(1,1,im.shape[0],im.shape[1]))
@@ -37,14 +37,14 @@ for x in range(1, 19):
        im = np.array(Image.open(path2 +  str(x) +"/test"+type))
        hh = np.array(Image.open(path2 +  str(x) +"/average"+type)) 
        im2 = im[:,range(0,im.shape[1],2)]   #<-removal of intermediate A-scans
-       im2 = scipy.misc.imresize(im2,np.shape(im)) #<-----  Interpolation to High resolution
-       im[:,range(1,im.shape[1],2)] = im2[:,range(1,im.shape[1],2)]
+       im = scipy.misc.imresize(im2,np.shape(im)) #<-----  Interpolation to High resolution
+       #im[:,range(1,im.shape[1],2)] = im2[:,range(1,im.shape[1],2)]
        if x==1:
           LL = np.ndarray.reshape(im,(1,1,im.shape[0],im.shape[1]))
-          HH = np.ndarray.reshape(hh,(1,hh.shape[0],hh.shape[1]))
+          HH = np.ndarray.reshape(hh,(1,1,hh.shape[0],hh.shape[1]))
        else:
           ll = np.ndarray.reshape(im,(1,1,im.shape[0],im.shape[1]))
-          hh = np.ndarray.reshape(hh,(1,hh.shape[0],hh.shape[1]))
+          hh = np.ndarray.reshape(hh,(1,1,hh.shape[0],hh.shape[1]))
           LL = np.concatenate((LL, ll), axis=0)
           HH = np.concatenate((HH, hh), axis=0)
 print('Test Data Prepared')
