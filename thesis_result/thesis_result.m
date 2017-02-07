@@ -30,7 +30,7 @@ for temp =1:17
     %[PSNR,MSE,MAXERR,L2RAT]= measerr(X,XAPP);
 SSIM_SRCNN(temp) = ssim(SRCNN(:,:,temp)/255,GT(:,:,temp)/255);
 SSIM_SRCNN_modified(temp) = ssim(SRCNN_modified(:,:,temp)/255,GT(:,:,temp)/255);
-
+imwrite(SRCNN_modified(:,:,temp)/255,['Test_',num2str(temp),'_Proposed.png'],'png')
 %ssimval = ssim;(A,ref)
     
 end 
