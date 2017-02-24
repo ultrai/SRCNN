@@ -68,3 +68,26 @@ std 2.2401   76.7299   27.6511    0.0847    0.0250
 29.7834406333473	68.3496503978226	62.8296461105347	1.05471267825706	0.687662242935733]
 
 %SF
+
+
+load('train.mat')
+train = 10*log(255*255./x)/log(10);
+load('test.mat')
+test = 10*log(255*255./x)/log(10);
+load('train_modified.mat')
+train_modified = 10*log(255*255./x)/log(10);
+load('test_modified.mat')
+test_modified = 10*log(255*255./x)/log(10);
+x = [1:1250];
+
+plot(x,train,x,test,x,train_modified,x,test_modified)
+xlabel('Epoch') % x-axis label
+ylabel('PSNR') % y-axis label
+
+
+legend('Train','Test','Train Modified','Test Modified') 
+ax = gca; % current axes
+ax.FontSize = 12;
+ax.YLim = [23 32];
+ax.XLim = [1 1250];
+print('TrainVsTest','-dpng')
