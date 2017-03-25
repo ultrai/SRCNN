@@ -24,4 +24,8 @@ Prof. Sina Farsiu team has generously made the data available [here!](http://peo
 $ python Data.py (update)
 $ th 
 th> dofile('main.lua')
+
 ```
+## Competing approaches
+1. [Structured random forest code](http://lrs.icg.tugraz.at/downloads/srf_cvpr15_public_v1.00.zip)
+2. [Structured random forest web adress](http://lrs.icg.tugraz.at/members/schulter)
