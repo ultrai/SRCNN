@@ -9,6 +9,7 @@ require 'cutorch'
 require 'math'
 im = require 'image'
 --py = require('fb.python')
+-- parameters 29601
 cutorch.setDevice(2)
 torch.setdefaulttensortype('torch.FloatTensor')
 
