@@ -9,7 +9,7 @@ require 'math'
 im = require 'image'
 cutorch.setDevice(2)
 torch.setdefaulttensortype('torch.FloatTensor')
-
+--parameters 54801
 
 require 'hdf5'
 myFile = hdf5.open('Data.h5', 'r')
